@@ -6,7 +6,7 @@ const env = {
   // Note: It is also safer to not hardcode a fallback for JWT_SECRET in production
   JWT_SECRET: process.env.JWT_SECRET || 'super_secret_jwt_key_12345',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
-  AI_SERVICE_URL: process.env.AI_SERVICE_URL || 'http://localhost:8000',
+  AI_SERVICE_URL: process.env.AI_SERVICE_URL || 'https://codemind-ai-code-reviews-and-bug-finder.onrender.com',
   NODE_ENV: process.env.NODE_ENV || 'development',
   // GitHub PR Bot
   GITHUB_TOKEN: process.env.GITHUB_TOKEN || '',
