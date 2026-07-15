@@ -13,12 +13,23 @@ const cloneRepository = (repoUrl, targetDir) => {
       fs.mkdirSync(targetDir, { recursive: true });
     }
 
+    // Inject GITHUB_TOKEN if configured for private repo cloning
+    let cloneUrl = repoUrl;
+    const token = process.env.GITHUB_TOKEN;
+    if (token) {
+      cloneUrl = repoUrl.replace('https://github.com', `https://${token}@github.com`);
+    }
+
     // Disable credential helper to prevent login popups/prompts on server
-    const command = `git -c credential.helper= clone --depth 1 ${repoUrl} "${targetDir}"`;
+    const command = `git -c credential.helper= clone --depth 1 ${cloneUrl} "${targetDir}"`;
 
     exec(command, { env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } }, (error, stdout, stderr) => {
       if (error) {
-        return reject(new Error(`Failed to clone git repository: ${stderr || error.message}`));
+        let sanitizedError = stderr || error.message;
+        if (token) {
+          sanitizedError = sanitizedError.replace(new RegExp(token, 'g'), '****');
+        }
+        return reject(new Error(`Failed to clone git repository: ${sanitizedError}`));
       }
       resolve(targetDir);
     });
