@@ -32,7 +32,7 @@ Upload a ZIP or import a GitHub repo — get instant bug, security & performance
 
 <br/><br/>
 
-[🚀 Live Demo](#) · [📖 Documentation](./docs) · [🐛 Report Bug](#) · [✨ Request Feature](#)
+[🚀 Live Demo](https://code-mind-ai-code-reviews-and-bug-f.vercel.app/) · [📖 Documentation](./docs/assets/CodeMind Code Audit Report.pfg) · [🐛 Report Bug](#) · [✨ Request Feature](#)
 
 </div>
 
