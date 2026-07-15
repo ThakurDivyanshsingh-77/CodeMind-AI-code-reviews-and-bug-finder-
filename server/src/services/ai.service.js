@@ -1,11 +1,10 @@
 const axios = require('axios');
 const env = require('../config/env');
 
-const requestAnalysis = async (projectPath) => {
+const requestAnalysis = async (projectPath, files = null) => {
   try {
-    const response = await axios.post(`${env.AI_SERVICE_URL}/analyze`, {
-      projectPath
-    });
+    const payload = files && files.length > 0 ? { files } : { projectPath };
+    const response = await axios.post(`${env.AI_SERVICE_URL}/analyze`, payload);
     
     if (response.data && response.data.success) {
       return response.data.report;

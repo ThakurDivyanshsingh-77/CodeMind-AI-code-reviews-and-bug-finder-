@@ -1,6 +1,7 @@
 const Review = require('../models/Review');
 const Project = require('../models/Project');
 const { requestAnalysis } = require('./ai.service');
+const { getProjectFiles } = require('./project.service');
 
 const runCodeReview = async (projectId, userId) => {
   const project = await Project.findOne({ _id: projectId, userId });
@@ -13,7 +14,8 @@ const runCodeReview = async (projectId, userId) => {
   await project.save();
 
   try {
-    const report = await requestAnalysis(project.projectPath);
+    const files = await getProjectFiles(projectId, userId);
+    const report = await requestAnalysis(project.projectPath, files);
 
     const review = await Review.create({
       projectId,

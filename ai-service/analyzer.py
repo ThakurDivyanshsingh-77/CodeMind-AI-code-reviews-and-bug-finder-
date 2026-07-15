@@ -84,7 +84,7 @@ def read_project_files(project_path: str) -> dict:
     return files_content
 
 
-def analyze_codebase(project_path: str) -> dict:
+def analyze_codebase(project_path: str = None, files_content: dict = None) -> dict:
     provider = _get_ai_provider()
 
     if provider != "groq":
@@ -93,7 +93,10 @@ def analyze_codebase(project_path: str) -> dict:
             raise ValueError("GEMINI_API_KEY environment variable is missing")
         genai.configure(api_key=api_key)
 
-    files_content = read_project_files(project_path)
+    if files_content is None:
+        if not project_path:
+            raise ValueError("Either project_path or files_content must be provided")
+        files_content = read_project_files(project_path)
     if not files_content:
         return {
             "overallScore": 100,

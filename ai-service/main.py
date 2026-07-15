@@ -10,8 +10,15 @@ from analyzer import analyze_codebase, chat_with_ai, rag_chat
 
 app = FastAPI(title="CodeMind AI Review Service")
 
+from typing import Optional, List
+
+class FilePayload(BaseModel):
+    path: str
+    content: str
+
 class AnalysisRequest(BaseModel):
-    projectPath: str
+    projectPath: Optional[str] = None
+    files: Optional[List[FilePayload]] = None
 
 class ChatRequest(BaseModel):
     reviewContext: dict
@@ -25,11 +32,18 @@ class RagChatRequest(BaseModel):
 
 @app.post("/analyze")
 async def start_analysis(request: AnalysisRequest):
-    if not os.path.exists(request.projectPath):
-        raise HTTPException(status_code=404, detail="Target project directory path not found")
+    files_dict = None
+    if request.files is not None and len(request.files) > 0:
+        files_dict = {f.path: f.content for f in request.files}
+        
+    if not files_dict:
+        if not request.projectPath:
+            raise HTTPException(status_code=400, detail="Either projectPath or files must be provided")
+        if not os.path.exists(request.projectPath):
+            raise HTTPException(status_code=404, detail="Target project directory path not found")
         
     try:
-        report = analyze_codebase(request.projectPath)
+        report = analyze_codebase(project_path=request.projectPath, files_content=files_dict)
         return {"success": True, "report": report}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
