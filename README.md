@@ -32,7 +32,7 @@ Upload a ZIP or import a GitHub repo — get instant bug, security & performance
 
 <br/><br/>
 
-[🚀 Live Demo](https://code-mind-ai-code-reviews-and-bug-f.vercel.app/) · [📖 Documentation](./docs/assets/CodeMind Code Audit Report.pdf) · [🐛 Report Bug](#) · [✨ Request Feature](#)
+[🚀 Live Demo](https://code-mind-ai-code-reviews-and-bug-f.vercel.app/) · [📖 Documentation](./docs/assets/CodeMind Code Audit Report.pfg) · [🐛 Report Bug](#) · [✨ Request Feature](#)
 
 </div>
 
@@ -69,6 +69,9 @@ Upload a ZIP or import a GitHub repo — get instant bug, security & performance
 
 <div align="center">
 
+<!-- 🔽 REPLACE THE SRC LINKS BELOW WITH YOUR OWN SCREENSHOTS 🔽 -->
+<!-- Recommended: store images in a `docs/assets/` or `.github/assets/` folder -->
+
 ### 🏠 Dashboard
 <img src="./docs/assets/dashboard.png" alt="Dashboard Screenshot" width="90%"/>
 
@@ -104,8 +107,9 @@ Upload a ZIP or import a GitHub repo — get instant bug, security & performance
 
 <br/>
 
-### 🎬 Landing Page Hero
-<img src="./docs/assets/landing.png" alt="Landing Page Hero" width="90%"/>
+<!-- Optional: demo GIF -->
+### 🎬 Live Demo
+<img src="./docs/assets/demo.gif" alt="Demo GIF" width="90%"/>
 
 </div>
 
