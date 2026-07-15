@@ -1,0 +1,278 @@
+/* ─────────────────────────────────────────────────────────────
+ * CodeMind Premium HTML Report CSS (Browser Preview & Layout)
+ * ───────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root, [data-theme="light"] {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Premium Light Theme Palette */
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #F1F5F9;
+  --bg-card: #FFFFFF;
+  
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+  --border-color: #E2E8F0;
+  
+  --primary: #4F46E5;
+  --primary-light: #EEF2FF;
+  --primary-dark: #3730A3;
+  --indigo-soft: #818CF8;
+  
+  --gold: #D97706;
+  --gold-light: #FEF3C7;
+  --gold-deep: #B45309;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+  
+  /* Severities */
+  --critical: #DC2626;
+  --critical-bg: #FEE2E2;
+  --high: #EA580C;
+  --high-bg: #FFEDD5;
+  --medium: #D97706;
+  --medium-bg: #FEF3C7;
+  --low: #4B5563;
+  --low-bg: #F3F4F6;
+  
+  /* Statuses */
+  --success: #16A34A;
+  --success-bg: #DCFCE7;
+  --info: #2563EB;
+  --info-bg: #DBEAFE;
+
+  /* Code Blocks */
+  --code-bg: #0F172A;
+  --code-text: #F8FAFC;
+  --code-border: #1E293B;
+  --code-line-number: #475569;
+  --code-line-border: rgba(71, 85, 105, 0.3);
+}
+
+[data-theme="dark"] {
+  /* Premium Dark Theme Palette */
+  --bg-primary: #090D1A;
+  --bg-secondary: #0D1324;
+  --bg-card: #121B2F;
+  
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #64748B;
+  --border-color: rgba(255, 255, 255, 0.08);
+  
+  --primary: #6366F1;
+  --primary-light: #1E1B4B;
+  --primary-dark: #4F46E5;
+  --indigo-soft: #818CF8;
+  
+  --gold: #F59E0B;
+  --gold-light: #451A03;
+  --gold-deep: #FBBF24;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.45), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+
+  /* Severities */
+  --critical: #EF4444;
+  --critical-bg: #450A0A;
+  --high: #F97316;
+  --high-bg: #431407;
+  --medium: #F59E0B;
+  --medium-bg: #451A03;
+  --low: #9CA3AF;
+  --low-bg: #1F2937;
+  
+  /* Statuses */
+  --success: #10B981;
+  --success-bg: #064E3B;
+  --info: #3B82F6;
+  --info-bg: #1E3A8A;
+
+  /* Code Blocks */
+  --code-bg: #080C16;
+  --code-text: #E2E8F0;
+  --code-border: rgba(255, 255, 255, 0.05);
+  --code-line-number: #475569;
+  --code-line-border: rgba(71, 85, 105, 0.2);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Luxury Mesh Grid for Cover Page (Static dark, never toggles for high impact) */
+.mesh-grid {
+  background-color: #060a13;
+  background-image: 
+    radial-gradient(at 70% 10%, rgba(99, 102, 241, 0.18) 0px, transparent 60%),
+    radial-gradient(at 20% 90%, rgba(245, 158, 11, 0.08) 0px, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+}
+
+/* Glassmorphism details */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.theme-glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+}
+
+/* Scorecard circular gauges */
+.gauge-ring {
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom premium card animations */
+.premium-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.premium-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Hover Accent Borders */
+.card-glow-indigo:hover {
+  border-color: var(--primary) !important;
+  box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.12) !important;
+}
+.card-glow-red:hover {
+  border-color: var(--critical) !important;
+  box-shadow: 0 20px 25px -5px rgba(239, 68, 68, 0.12) !important;
+}
+.card-glow-amber:hover {
+  border-color: var(--gold) !important;
+  box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.12) !important;
+}
+
+/* Collapsible Finding Panel */
+.collapsible-trigger {
+  cursor: pointer;
+}
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  opacity: 0;
+}
+.collapsible-content.expanded {
+  max-height: 2000px; /* high threshold */
+  opacity: 1;
+}
+.chevron-icon {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chevron-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* Syntax Highlighting and editor format */
+code, pre {
+  font-family: var(--font-mono);
+}
+
+.code-container {
+  background-color: var(--code-bg);
+  border-color: var(--code-border);
+  color: var(--code-text);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.code-line {
+  line-height: 1.6;
+  border-left: 2px solid transparent;
+}
+.code-line:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-left-color: var(--primary);
+}
+
+.line-number {
+  color: var(--code-line-number);
+  border-right: 1px solid var(--code-line-border);
+}
+
+.copy-btn {
+  opacity: 0.3;
+  transition: all 0.2s ease;
+}
+.code-container:hover .copy-btn {
+  opacity: 1;
+}
+
+/* Animated Transitions */
+.fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.slide-up {
+  opacity: 0;
+  animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger Animation Delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* Custom Scrollbar for Browser View */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeMind Code Audit Report</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            theme: {
+              bg: 'var(--bg-primary)',
+              secBg: 'var(--bg-secondary)',
+              card: 'var(--bg-card)',
+              text: 'var(--text-primary)',
+              textSec: 'var(--text-secondary)',
+              muted: 'var(--text-muted)',
+              border: 'var(--border-color)',
+            },
+            navy: {
+              DEFAULT: '#0E1526',
+              deep: '#080C16',
+              soft: '#182238',
+            },
+            gold: {
+              DEFAULT: '#C6A24D',
+              light: '#E8D19A',
+              deep: '#9A7B2E',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="report.css">
+  <link rel="stylesheet" href="print.css">
+</head>
+<body class="bg-theme-bg text-theme-text min-h-screen">
+
+  <!-- ─────────────────────────────────────────────────────────────
+   * STICKY FLOATING NAVBAR
+   * ───────────────────────────────────────────────────────────── -->
+  <header class="browser-only sticky top-0 z-50 w-full backdrop-blur-md bg-theme-bg/80 border-b border-theme-border px-6 py-3 flex justify-between items-center transition-all duration-300">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 border border-gold flex items-center justify-center font-bold text-gold text-base rounded bg-navy-soft/10">C</div>
+      <div>
+        <h4 class="font-extrabold text-xs tracking-wider uppercase text-gold">CodeMind</h4>
+        <p class="text-[8px] text-theme-muted font-mono tracking-widest leading-none">REPORT DASHBOARD</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-6">
+      <div class="hidden sm:flex items-center gap-4 text-xs font-medium text-theme-textSec">
+        <span>Project: <strong class="text-theme-text">{{PROJECT_NAME}}</strong></span>
+        <span class="h-4 w-px bg-theme-border"></span>
+        <span>Audit ID: <strong class="text-theme-text font-mono">{{AUDIT_ID}}</strong></span>
+      </div>
+      
+      <!-- Theme Switcher Button -->
+      <button id="themeToggleBtn" class="p-2 rounded-lg bg-theme-secBg hover:bg-theme-border text-theme-textSec transition border border-theme-border" title="Toggle Light/Dark Theme">
+        <!-- Sun Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="sun-icon h-4.5 w-4.5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+        </svg>
+        <!-- Moon Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="moon-icon h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ─────────────────────────────────────────────────────────────
+   * PAGE 1: COVER PAGE (Always Premium Dark Aesthetic)
+   * ───────────────────────────────────────────────────────────── -->
+  <section class="relative w-full h-[100vh] flex flex-col justify-between p-12 overflow-hidden mesh-grid text-white">
+    <!-- Corner Decorative Circle -->
+    <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full border border-gold/15 pointer-events-none"></div>
+    <div class="absolute -top-40 -right-40 w-[30rem] h-[30rem] rounded-full border border-gold/5 pointer-events-none"></div>
+
+    <!-- Header Logo & Branding -->
+    <div class="flex items-center justify-between z-10">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 border border-gold flex items-center justify-center font-bold text-gold text-lg rounded bg-navy-soft/30">C</div>
+        <div>
+          <h3 class="font-extrabold text-sm tracking-wider uppercase text-gold">CodeMind</h3>
+          <p class="text-[9px] text-slate-400 font-mono tracking-widest">AI CODE INTELLIGENCE</p>
+        </div>
+      </div>
+      <div class="text-right">
+        <span class="px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-gold-light border border-gold/30 rounded-full bg-gold/10">CONFIDENTIAL</span>
+      </div>
+    </div>
+
+    <!-- Main Title Block -->
+    <div class="my-auto z-10 max-w-2xl">
+      <h5 class="text-gold tracking-[0.25em] text-xs font-bold uppercase mb-3">SECURITY &amp; QUALITY LEDGER</h5>
+      <h1 class="text-5xl font-extrabold tracking-tight leading-tight text-white mb-2 font-sans">
+        Automated Code Audit<br>&amp; Remediation Report
+      </h1>
+      <div class="h-1 w-24 bg-gold my-6"></div>
+      <p class="text-slate-300 text-lg font-light leading-relaxed">
+        Deep static analysis and large-language model validation of security vulnerabilities, performance bottlenecks, and structural anomalies.
+      </p>
+    </div>
+
+    <!-- Footer Meta Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-slate-800 z-10 font-sans">
+      <div>
+        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Project Name</p>
+        <p class="text-sm font-semibold text-slate-200">{{PROJECT_NAME}}</p>
+      </div>
+      <div>
+        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Audit ID</p>
+        <p class="text-sm font-semibold text-slate-200 font-mono">{{AUDIT_ID}}</p>
+      </div>
+      <div>
+        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Date Generated</p>
+        <p class="text-sm font-semibold text-slate-200">{{DATE_GENERATED}}</p>
+      </div>
+      <div class="text-right md:text-left">
+        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Overall rating</p>
+        <div class="flex items-baseline md:justify-start justify-end gap-1.5 score-glow">
+          <span class="text-2xl font-bold text-gold">{{OVERALL_SCORE}}</span>
+          <span class="text-xs text-slate-400">/ 100</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────
+   * PAGE 2: EXECUTIVE SUMMARY & METRICS
+   * ───────────────────────────────────────────────────────────── -->
+  <section class="page-break container mx-auto px-6 py-12 max-w-5xl">
+    
+    <!-- Section Title -->
+    <div class="mb-10">
+      <span class="text-[10px] font-bold text-gold uppercase tracking-[0.2em]">SECTION 01</span>
+      <h2 class="text-2xl font-bold text-theme-text">Executive Summary</h2>
+      <div class="h-0.5 w-10 bg-gold mt-2"></div>
+    </div>
+
+    <!-- Scorecards Grid with Circular Gauges -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <!-- Card 1: Overall Score -->
+      <div class="score-card p-5 rounded-xl premium-card card-glow-indigo flex flex-col items-center text-center">
+        <h4 class="text-[10px] font-bold uppercase tracking-wider text-theme-muted mb-4">Overall Score</h4>
+        <div class="relative w-24 h-24 flex items-center justify-center mb-2">
+          <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+            <!-- Background circle -->
+            <circle cx="50" cy="50" r="40" stroke="var(--border-color)" stroke-width="7" fill="transparent" />
+            <!-- Animated foreground circle -->
+            <circle class="gauge-ring" data-value="{{OVERALL_SCORE}}" cx="50" cy="50" r="40" stroke="var(--primary)" stroke-width="7" fill="transparent" stroke-linecap="round" />
+          </svg>
+          <div class="absolute text-center">
+            <span class="text-2xl font-extrabold text-theme-text">{{OVERALL_SCORE}}</span>
+            <span class="text-[9px] text-theme-muted block font-medium">/ 100</span>
+          </div>
+        </div>
+      </div>
+      <!-- Card 2: Security -->
+      <div class="score-card p-5 rounded-xl premium-card card-glow-red flex flex-col items-center text-center">
+        <h4 class="text-[10px] font-bold uppercase tracking-wider text-theme-muted mb-4">Security Rating</h4>
+        <div class="relative w-24 h-24 flex items-center justify-center mb-2">
+          <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" stroke="var(--border-color)" stroke-width="7" fill="transparent" />
+            <circle class="gauge-ring" data-value="{{SECURITY_SCORE}}" cx="50" cy="50" r="40" stroke="var(--critical)" stroke-width="7" fill="transparent" stroke-linecap="round" />
+          </svg>
+          <div class="absolute text-center">
+            <span class="text-2xl font-extrabold text-theme-text">{{SECURITY_SCORE}}</span>
+            <span class="text-[9px] text-theme-muted block font-medium">/ 100</span>
+          </div>
+        </div>
+      </div>
+      <!-- Card 3: Performance -->
+      <div class="score-card p-5 rounded-xl premium-card card-glow-indigo flex flex-col items-center text-center">
+        <h4 class="text-[10px] font-bold uppercase tracking-wider text-theme-muted mb-4">Performance Score</h4>
+        <div class="relative w-24 h-24 flex items-center justify-center mb-2">
+          <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" stroke="var(--border-color)" stroke-width="7" fill="transparent" />
+            <circle class="gauge-ring" data-value="{{PERFORMANCE_SCORE}}" cx="50" cy="50" r="40" stroke="var(--primary)" stroke-width="7" fill="transparent" stroke-linecap="round" />
+          </svg>
+          <div class="absolute text-center">
+            <span class="text-2xl font-extrabold text-theme-text">{{PERFORMANCE_SCORE}}</span>
+            <span class="text-[9px] text-theme-muted block font-medium">/ 100</span>
+          </div>
+        </div>
+      </div>
+      <!-- Card 4: Maintainability -->
+      <div class="score-card p-5 rounded-xl premium-card card-glow-amber flex flex-col items-center text-center">
+        <h4 class="text-[10px] font-bold uppercase tracking-wider text-theme-muted mb-4">Maintainability</h4>
+        <div class="relative w-24 h-24 flex items-center justify-center mb-2">
+          <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" stroke="var(--border-color)" stroke-width="7" fill="transparent" />
+            <circle class="gauge-ring" data-value="{{MAINTAINABILITY_SCORE}}" cx="50" cy="50" r="40" stroke="var(--gold)" stroke-width="7" fill="transparent" stroke-linecap="round" />
+          </svg>
+          <div class="absolute text-center">
+            <span class="text-2xl font-extrabold text-theme-text">{{MAINTAINABILITY_SCORE}}</span>
+            <span class="text-[9px] text-theme-muted block font-medium">/ 100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Summary Box -->
+    <div class="rounded-xl p-6 mb-10 relative overflow-hidden premium-card card-glow-amber">
+      <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-gold"></div>
+      <div class="flex items-center gap-2 mb-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <h3 class="font-bold text-sm text-theme-text tracking-wide uppercase">AI Executive Analysis</h3>
+      </div>
+      <p class="text-theme-textSec text-sm leading-relaxed text-justify">
+        {{AI_SUMMARY}}
+      </p>
+    </div>
+
+    <!-- Charts & Statistics Layout Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Donut Chart -->
+      <div class="chart-card p-6 rounded-xl lg:col-span-4 premium-card">
+        <h3 class="text-xs font-bold text-theme-text uppercase tracking-wider mb-4">Severity Breakdown</h3>
+        <div class="relative flex justify-center items-center mb-6">
+          <svg id="severityDonut" data-critical="{{CRITICAL_COUNT}}" data-high="{{HIGH_COUNT}}" data-medium="{{MEDIUM_COUNT}}" data-low="{{LOW_COUNT}}" viewBox="0 0 100 100" class="w-36 h-36">
+            <!-- Segments drawn dynamically via JS -->
+          </svg>
+          <div class="absolute text-center">
+            <span class="text-2xl font-extrabold text-theme-text">{{TOTAL_COUNT}}</span>
+            <p class="text-[8px] text-theme-muted font-bold uppercase tracking-wider">Total Issues</p>
+          </div>
+        </div>
+        <!-- Legends -->
+        <div class="space-y-2 font-sans">
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+              <span class="text-theme-textSec font-medium">Critical</span>
+            </div>
+            <span class="font-bold text-theme-text">{{CRITICAL_COUNT}}</span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+              <span class="text-theme-textSec font-medium">High</span>
+            </div>
+            <span class="font-bold text-theme-text">{{HIGH_COUNT}}</span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span class="text-theme-textSec font-medium">Medium</span>
+            </div>
+            <span class="font-bold text-theme-text">{{MEDIUM_COUNT}}</span>
+          </div>
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+              <span class="text-theme-textSec font-medium">Low</span>
+            </div>
+            <span class="font-bold text-theme-text">{{LOW_COUNT}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bar Chart -->
+      <div class="chart-card p-6 rounded-xl lg:col-span-8 premium-card">
+        <h3 class="text-xs font-bold text-theme-text uppercase tracking-wider mb-4">Rating Distributions</h3>
+        <svg id="scoresBar" data-quality="{{QUALITY_SCORE}}" data-security="{{SECURITY_SCORE}}" data-performance="{{PERFORMANCE_SCORE}}" data-maintainability="{{MAINTAINABILITY_SCORE}}" viewBox="0 0 360 180" class="w-full h-auto">
+          <!-- Drawn dynamically via JS -->
+        </svg>
+      </div>
+    </div>
+
+    <!-- Statistics Panel -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+      <div class="stat-card p-4 rounded-xl premium-card text-center">
+        <p class="text-[9px] font-bold text-theme-muted uppercase tracking-wider mb-1">Files Scanned</p>
+        <h2 class="text-2xl font-extrabold text-theme-text count-up" data-target="{{FILES_SCANNED}}">0</h2>
+      </div>
+      <div class="stat-card p-4 rounded-xl premium-card text-center">
+        <p class="text-[9px] font-bold text-theme-muted uppercase tracking-wider mb-1">Lines Analyzed</p>
+        <h2 class="text-2xl font-extrabold text-theme-text count-up" data-target="{{LINES_ANALYZED}}">0</h2>
+      </div>
+      <div class="stat-card p-4 rounded-xl premium-card text-center">
+        <p class="text-[9px] font-bold text-theme-muted uppercase tracking-wider mb-1">Quality Hotspots</p>
+        <h2 class="text-2xl font-extrabold text-theme-text count-up" data-target="{{QUALITY_HOTSPOTS}}">0</h2>
+      </div>
+      <div class="stat-card p-4 rounded-xl premium-card text-center">
+        <p class="text-[9px] font-bold text-theme-muted uppercase tracking-wider mb-1">Time Elapsed</p>
+        <h2 class="text-2xl font-extrabold text-theme-text">{{ELAPSED_TIME}}</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────
+   * PAGE 3+: DETAILED AUDIT LOGS
+   * ───────────────────────────────────────────────────────────── -->
+  <section class="page-break container mx-auto px-6 py-12 max-w-5xl">
+    
+    <!-- Section Title -->
+    <div class="mb-8 flex justify-between items-center">
+      <div>
+        <span class="text-[10px] font-bold text-gold uppercase tracking-[0.2em]">SECTION 02</span>
+        <h2 class="text-2xl font-bold text-theme-text">Detailed Findings &amp; Remediation</h2>
+        <div class="h-0.5 w-10 bg-gold mt-2"></div>
+      </div>
+      <div class="browser-only text-xs text-theme-muted italic">
+        💡 Click on any finding header to collapse or expand.
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      {{DETAILED_FINDINGS}}
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────
+   * PAGE 4: DETAILED RECOMMENDATIONS
+   * ───────────────────────────────────────────────────────────── -->
+  <section class="page-break container mx-auto px-6 py-12 max-w-5xl">
+    
+    <!-- Section Title -->
+    <div class="mb-8">
+      <span class="text-[10px] font-bold text-gold uppercase tracking-[0.2em]">SECTION 03</span>
+      <h2 class="text-2xl font-bold text-theme-text">Summary Recommendations</h2>
+      <div class="h-0.5 w-10 bg-gold mt-2"></div>
+    </div>
+
+    <!-- Recommendations Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {{RECOMMENDATIONS_GRID}}
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────
+   * STATIC PRINT FOOTER (Rendered on pages except Cover)
+   * ───────────────────────────────────────────────────────────── -->
+  <div class="print-footer hidden w-full px-12 py-4 border-t border-theme-border flex justify-between items-center text-theme-muted font-mono text-[9px] bg-theme-card">
+    <span>CONFIDENTIAL &mdash; AUDIT BY CODEMIND</span>
+    <span>Generated: {{DATE_GENERATED}}</span>
+  </div>
+
+  <!-- Browser Script -->
+  <script src="report.js"></script>
+</body>
+</html>

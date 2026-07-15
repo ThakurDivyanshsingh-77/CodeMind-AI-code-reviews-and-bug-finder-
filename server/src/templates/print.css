@@ -1,0 +1,145 @@
+/* ─────────────────────────────────────────────────────────────
+ * CodeMind Premium HTML Report CSS (Puppeteer PDF Export Rules)
+ * ───────────────────────────────────────────────────────────── */
+
+@media print {
+  /* Page Definition */
+  @page {
+    size: letter portrait;
+    margin: 16mm 14mm 16mm 14mm;
+  }
+
+  /* Core resets for printing */
+  html, body {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Force background colors to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Layout and margins */
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Disable transitions & animations on print */
+  * {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  /* Prevent elements from breaking mid-content */
+  .premium-card,
+  .issue-card,
+  .score-card,
+  .code-container,
+  .recommendation-card,
+  .chart-card,
+  .stat-card,
+  blockquote,
+  pre {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Force page breaks on specific section boundaries */
+  .page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Header / Footer margins for page context */
+  .print-header {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .print-footer {
+    display: block !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  /* Hide interactive/browser elements */
+  .copy-btn,
+  .browser-only,
+  button,
+  .interactive-hint {
+    display: none !important;
+  }
+
+  /* Fix link display */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: #4B5563;
+  }
+
+  /* Grid adjustment for printing */
+  .grid {
+    display: grid !important;
+  }
+
+  .print-col-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .print-col-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .print-col-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  /* Monospace typography on print */
+  pre, code {
+    font-size: 8.5pt !important;
+    background-color: #0F172A !important;
+    color: #F8FAFC !important;
+  }
+
+  /* Severity badge custom style overrides for high contrast on print */
+  .badge-critical {
+    background-color: #FEE2E2 !important;
+    color: #991B1B !important;
+    border: 1px solid #F87171 !important;
+  }
+  .badge-high {
+    background-color: #FFEDD5 !important;
+    color: #9A3412 !important;
+    border: 1px solid #FB923C !important;
+  }
+  .badge-medium {
+    background-color: #FEF3C7 !important;
+    color: #92400E !important;
+    border: 1px solid #FBBF24 !important;
+  }
+  .badge-low {
+    background-color: #F3F4F6 !important;
+    color: #374151 !important;
+    border: 1px solid #9CA3AF !important;
+  }
+}

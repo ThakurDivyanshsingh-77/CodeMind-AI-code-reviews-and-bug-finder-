@@ -1,0 +1,6 @@
+mongodb_data/
+*.zip
+node_modules/
+__pycache__/
+server/uploads/
+.env

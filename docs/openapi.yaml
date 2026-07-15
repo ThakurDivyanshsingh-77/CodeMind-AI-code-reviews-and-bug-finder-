@@ -1,0 +1,346 @@
+openapi: 3.0.3
+info:
+  title: AI Code Reviewer API
+  description: API Documentation for the AI Code Reviewer Platform. This API handles user authentication, project uploads (ZIP/GitHub), AI review trigger, and retrieval of review stats and chat.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api
+    description: Local development server
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: Divyansh
+                email:
+                  type: string
+                  format: email
+                  example: abc@gmail.com
+                password:
+                  type: string
+                  format: password
+                  example: "12345678"
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    example: JWT_TOKEN
+        '400':
+          description: Validation error or user already exists
+
+  /auth/login:
+    post:
+      summary: Authenticate user and return token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: abc@gmail.com
+                password:
+                  type: string
+                  format: password
+                  example: "12345678"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: JWT_TOKEN
+        '401':
+          description: Invalid credentials
+
+  /projects/upload:
+    post:
+      summary: Upload a project as a ZIP archive
+      tags:
+        - Projects
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The zip archive containing the project source code.
+      responses:
+        '201':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projectId:
+                    type: string
+                    example: "123"
+                  status:
+                    type: string
+                    example: uploaded
+        '401':
+          description: Unauthorized
+
+  /projects/github:
+    post:
+      summary: Import a repository from GitHub
+      tags:
+        - Projects
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - repoUrl
+              properties:
+                repoUrl:
+                  type: string
+                  format: uri
+                  example: https://github.com/user/project
+      responses:
+        '201':
+          description: GitHub repository clone initialized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projectId:
+                    type: string
+                    example: "123"
+                  status:
+                    type: string
+                    example: importing
+        '401':
+          description: Unauthorized
+
+  /projects:
+    get:
+      summary: Get all projects for the logged-in user
+      tags:
+        - Projects
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    projectId:
+                      type: string
+                      example: "123"
+                    projectName:
+                      type: string
+                      example: Portfolio
+                    status:
+                      type: string
+                      example: Completed
+        '401':
+          description: Unauthorized
+
+  /review/start:
+    post:
+      summary: Trigger an AI code review for a project
+      tags:
+        - Reviews
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - projectId
+              properties:
+                projectId:
+                  type: string
+                  example: "123"
+      responses:
+        '200':
+          description: Review processing started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviewId:
+                    type: string
+                    example: "456"
+                  status:
+                    type: string
+                    example: Processing
+        '404':
+          description: Project not found
+
+  /review/{id}:
+    get:
+      summary: Retrieve the results of a specific code review
+      tags:
+        - Reviews
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The Review ID
+      responses:
+        '200':
+          description: Detailed review insights
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  score:
+                    type: integer
+                    example: 92
+                  security:
+                    type: integer
+                    example: 88
+                  performance:
+                    type: integer
+                    example: 95
+                  bugs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        filePath:
+                          type: string
+                          example: src/auth.js
+                        line:
+                          type: integer
+                          example: 24
+                        severity:
+                          type: string
+                          example: high
+                        description:
+                          type: string
+                          example: Hardcoded credentials found
+                        fixSuggestion:
+                          type: string
+                          example: Use environment variables instead
+        '404':
+          description: Review not found
+
+  /chat:
+    post:
+      summary: Send a message to the AI assistant regarding a review
+      tags:
+        - AI Chat
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reviewId
+                - message
+              properties:
+                reviewId:
+                  type: string
+                  example: "123"
+                message:
+                  type: string
+                  example: Explain this function
+      responses:
+        '200':
+          description: AI response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reply:
+                    type: string
+                    example: This function validates JWT...
+
+  /report/{reviewId}:
+    get:
+      summary: Download PDF/JSON/HTML reports for a review
+      tags:
+        - Reports
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The Review ID
+      responses:
+        '200':
+          description: PDF or document response
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
