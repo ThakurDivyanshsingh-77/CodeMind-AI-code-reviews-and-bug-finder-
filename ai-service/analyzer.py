@@ -494,19 +494,66 @@ def _keyword_similarity_search(query: str, chunks: list, top_k: int) -> list:
     return [chunk for score, chunk in scored_chunks[:top_k]]
 
 
-def rag_chat(project_path: str, question: str, chat_history: list) -> dict:
+def index_project_chunks(project_path: str = None, files_content: dict = None) -> list:
     """
-    Full RAG pipeline with high-reliability fallbacks:
-    1. Chunk all project source files
-    2. Embed using Gemini or use Keyword Similarity Search
-    3. Retrieve top-K chunks
-    4. Generate response using Gemini or Groq
+    Chunk the codebase, generate embeddings for each chunk, and return them.
+    Supports local files (project_path) or uploaded memory files (files_content).
+    """
+    if files_content is None:
+        if not project_path:
+            raise ValueError("Either project_path or files_content must be provided")
+        files_content = read_project_files(project_path)
+
+    if not files_content:
+        return []
+
+    chunks = []
+    for rel_path, content in files_content.items():
+        lines = content.splitlines(keepends=True)
+        step = CHUNK_LINES - CHUNK_OVERLAP
+        for start in range(0, max(1, len(lines)), step):
+            end = min(start + CHUNK_LINES, len(lines))
+            chunk_text = ''.join(lines[start:end]).strip()
+            if len(chunk_text) < 20:
+                continue
+            header = f"// File: {rel_path} (lines {start + 1}–{end})\n"
+            chunks.append({
+                'text': header + chunk_text,
+                'filePath': rel_path,
+                'startLine': start + 1,
+                'endLine': end
+            })
+
+    if not chunks:
+        return []
+
+    # Bulk embed all chunks using Gemini if available
+    api_key = os.getenv("GEMINI_API_KEY")
+    if api_key:
+        try:
+            chunk_texts = [c['text'] for c in chunks]
+            embeddings = _embed_texts(chunk_texts)
+            for idx, chunk in enumerate(chunks):
+                chunk['embedding'] = embeddings[idx].tolist()
+        except Exception as e:
+            print(f"[AI Router] Bulk chunk embedding failed: {e}. Falling back to empty vectors for offline keyword search.")
+            for chunk in chunks:
+                chunk['embedding'] = []
+    else:
+        for chunk in chunks:
+            chunk['embedding'] = []
+
+    return chunks
+
+
+def rag_chat(question: str, chat_history: list, chunks: list) -> dict:
+    """
+    Optimized RAG pipeline with high-reliability fallbacks:
+    Uses pre-embedded chunks from database cache instead of walking/embedding files on every turn.
     """
     provider = _get_ai_provider()
     api_key = os.getenv("GEMINI_API_KEY")
 
-    # Step 1 — Chunk the codebase
-    chunks = _chunk_project(project_path)
     if not chunks:
         return {
             "reply": "I couldn't find any readable source files in this project to search through.",
@@ -514,16 +561,16 @@ def rag_chat(project_path: str, question: str, chat_history: list) -> dict:
         }
 
     retrieved = []
-    use_keyword_search = (provider == "groq") or (not api_key)
+    # If the first chunk has no embedding vector, fallback to offline keyword search
+    has_embeddings = len(chunks[0].get('embedding', [])) > 0
+    use_keyword_search = (provider == "groq") or (not api_key) or (not has_embeddings)
 
     if not use_keyword_search:
         try:
             genai.configure(api_key=api_key)
-            # Step 2 — Embed all chunks
-            chunk_texts = [c['text'] for c in chunks]
-            chunk_embeddings = _embed_texts(chunk_texts)
+            chunk_embeddings = np.array([c['embedding'] for c in chunks], dtype=np.float32)
 
-            # Step 3 — Embed the query
+            # Embed only the query
             query_result = genai.embed_content(
                 model="models/gemini-embedding-001",
                 content=question,
@@ -531,25 +578,23 @@ def rag_chat(project_path: str, question: str, chat_history: list) -> dict:
             )
             query_vec = np.array(query_result['embedding'], dtype=np.float32)
 
-            # Step 4 — Find top-K chunks by cosine similarity
+            # Find top-K chunks by cosine similarity
             scores = _cosine_similarity(query_vec, chunk_embeddings)
             top_indices = np.argsort(scores)[::-1][:TOP_K]
             retrieved = [chunks[i] for i in top_indices]
         except Exception as e:
-            print(f"[AI Router] Gemini Embedding failed: {e}. Falling back to Keyword Similarity Search.")
+            print(f"[AI Router] Gemini query embedding search failed: {e}. Falling back to Keyword Similarity Search.")
             use_keyword_search = True
 
     if use_keyword_search:
-        # Fallback to local keyword search (No API calls, offline-friendly)
         retrieved = _keyword_similarity_search(question, chunks, TOP_K)
 
-    # Step 5 — Build grounded prompt
+    # Build context block
     context_block = "\n\n".join([
         f"[Source: {c['filePath']} lines {c['startLine']}–{c['endLine']}]\n{c['text']}"
         for c in retrieved
     ])
 
-    # If provider is groq or Gemini key is missing, force Groq generation
     if provider == "groq" or not api_key:
         from groq_provider import rag_generate_with_groq
         try:
@@ -571,7 +616,6 @@ def rag_chat(project_path: str, question: str, chat_history: list) -> dict:
                 "sources": []
             }
 
-    # Otherwise, use Gemini with Groq fallback
     system_instruction = (
         "You are CodeMind AI, an expert code assistant. A developer has uploaded a codebase "
         "and you have been given the most relevant code snippets as context.\n\n"
@@ -589,7 +633,6 @@ def rag_chat(project_path: str, question: str, chat_history: list) -> dict:
         system_instruction=system_instruction
     )
 
-    # Build conversation history
     contents = []
     for turn in chat_history:
         contents.append({"role": "user", "parts": [turn["question"]]})
@@ -605,14 +648,12 @@ def rag_chat(project_path: str, question: str, chat_history: list) -> dict:
             from groq_provider import rag_generate_with_groq
             reply = rag_generate_with_groq(context_block, chat_history, question)
         else:
-            # Fallback to Groq generation on any other error
             try:
                 from groq_provider import rag_generate_with_groq
                 reply = rag_generate_with_groq(context_block, chat_history, question)
             except Exception:
                 raise e
 
-    # Deduplicate sources for the response
     seen = set()
     sources = []
     for c in retrieved:

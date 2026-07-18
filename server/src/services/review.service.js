@@ -29,6 +29,34 @@ const runCodeReview = async (projectId, userId) => {
       aiSummary: report.aiSummary
     });
 
+    // Trigger codebase indexing for RAG if not already indexed
+    const CodeChunk = require('../models/CodeChunk');
+    const chunkCount = await CodeChunk.countDocuments({ projectId });
+    if (chunkCount === 0) {
+      try {
+        const axios = require('axios');
+        const env = require('../config/env');
+        const payload = files && files.length > 0 ? { files } : { projectPath: project.projectPath };
+        const indexResponse = await axios.post(`${env.AI_SERVICE_URL}/index`, payload);
+        
+        if (indexResponse.data && indexResponse.data.success && indexResponse.data.chunks) {
+          const dbChunks = indexResponse.data.chunks.map(c => ({
+            projectId,
+            filePath: c.filePath,
+            startLine: c.startLine,
+            endLine: c.endLine,
+            text: c.text,
+            embedding: c.embedding || []
+          }));
+          if (dbChunks.length > 0) {
+            await CodeChunk.insertMany(dbChunks);
+          }
+        }
+      } catch (indexErr) {
+        console.error("Failed to index codebase for RAG chat:", indexErr.message);
+      }
+    }
+
     // Update status to completed
     project.status = 'completed';
     await project.save();

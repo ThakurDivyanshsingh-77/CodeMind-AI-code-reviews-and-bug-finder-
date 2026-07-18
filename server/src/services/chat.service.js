@@ -83,11 +83,45 @@ const ragChat = async (projectId, userId, question) => {
   const history = await Chat.find({ reviewId: projectId, userId }).sort({ createdAt: 1 });
   const chatHistory = history.map(h => ({ question: h.question, answer: h.answer }));
 
+  const CodeChunk = require('../models/CodeChunk');
+  let chunks = await CodeChunk.find({ projectId });
+
+  if (chunks.length === 0) {
+    try {
+      const { getProjectFiles } = require('./project.service');
+      const files = await getProjectFiles(projectId, userId);
+      const payload = files && files.length > 0 ? { files } : { projectPath: project.projectPath };
+      const indexResponse = await axios.post(`${env.AI_SERVICE_URL}/index`, payload);
+      
+      if (indexResponse.data && indexResponse.data.success && indexResponse.data.chunks) {
+        const dbChunks = indexResponse.data.chunks.map(c => ({
+          projectId,
+          filePath: c.filePath,
+          startLine: c.startLine,
+          endLine: c.endLine,
+          text: c.text,
+          embedding: c.embedding || []
+        }));
+        if (dbChunks.length > 0) {
+          chunks = await CodeChunk.insertMany(dbChunks);
+        }
+      }
+    } catch (indexErr) {
+      console.error("Failed to index codebase on the fly for RAG:", indexErr.message);
+    }
+  }
+
   try {
     const response = await axios.post(`${env.AI_SERVICE_URL}/rag-chat`, {
-      projectPath: project.projectPath,
       question,
-      chatHistory
+      chatHistory,
+      chunks: chunks.map(c => ({
+        text: c.text,
+        filePath: c.filePath,
+        startLine: c.startLine,
+        endLine: c.endLine,
+        embedding: c.embedding || []
+      }))
     });
 
     if (response.data && response.data.success) {
