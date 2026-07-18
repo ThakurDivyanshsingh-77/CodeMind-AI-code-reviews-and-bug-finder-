@@ -162,6 +162,11 @@ def analyze_codebase(project_path: str = None, files_content: dict = None) -> di
                     parsed = json.loads(text)
                     if isinstance(parsed, list):
                         issues = parsed
+                    elif isinstance(parsed, dict):
+                        for key in ("issues", "results", "findings", "data", "analysis"):
+                            if key in parsed and isinstance(parsed[key], list):
+                                issues = parsed[key]
+                                break
                 except Exception as gemini_err:
                     if provider == "auto" and _is_rate_limit_error(gemini_err):
                         print(f"[AI Router] Gemini rate limit hit — switching to Groq for this batch")
@@ -263,6 +268,9 @@ def analyze_codebase(project_path: str = None, files_content: dict = None) -> di
             sev_mapped = "low"
             
         desc = f"{issue.get('title', 'Issue')}: {issue.get('description', '')}"
+        desc = desc.strip()
+        if not desc or desc == "Issue:":
+            desc = "Issue detected in file."
         
         sugg = issue.get("suggestion", "")
         fixed_code = issue.get("fixed_code", "")
@@ -281,6 +289,10 @@ def analyze_codebase(project_path: str = None, files_content: dict = None) -> di
                 lang = "typescript"
             
             sugg += f"\n\nSuggested Fix:\n```{lang}\n{fixed_code}\n```"
+
+        sugg = sugg.strip()
+        if not sugg:
+            sugg = "No specific fix suggestion provided."
 
         bugs.append({
             "filePath": issue.get("filePath", ""),

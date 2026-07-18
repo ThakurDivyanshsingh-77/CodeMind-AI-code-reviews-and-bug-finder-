@@ -33,10 +33,10 @@ class RagChatRequest(BaseModel):
 @app.post("/analyze")
 async def start_analysis(request: AnalysisRequest):
     files_dict = None
-    if request.files is not None and len(request.files) > 0:
+    if request.files is not None:
         files_dict = {f.path: f.content for f in request.files}
         
-    if not files_dict:
+    if files_dict is None:
         if not request.projectPath:
             raise HTTPException(status_code=400, detail="Either projectPath or files must be provided")
         if not os.path.exists(request.projectPath):

@@ -3,7 +3,7 @@ const env = require('../config/env');
 
 const requestAnalysis = async (projectPath, files = null) => {
   try {
-    const payload = files && files.length > 0 ? { files } : { projectPath };
+    const payload = files !== null ? { files } : { projectPath };
     const response = await axios.post(`${env.AI_SERVICE_URL}/analyze`, payload);
     
     if (response.data && response.data.success) {

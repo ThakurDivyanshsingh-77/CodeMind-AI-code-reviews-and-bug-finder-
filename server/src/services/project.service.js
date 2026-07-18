@@ -60,6 +60,20 @@ const getProjectFiles = async (projectId, userId) => {
   if (!project) {
     throw new Error('Project not found');
   }
+
+  if (!fs.existsSync(project.projectPath)) {
+    if (project.uploadType === 'github' && project.repositoryUrl) {
+      const { cloneRepository } = require('./github.service');
+      try {
+        await cloneRepository(project.repositoryUrl, project.projectPath);
+      } catch (cloneErr) {
+        throw new Error(`Failed to restore project from GitHub: ${cloneErr.message}`);
+      }
+    } else {
+      throw new Error('Project source files not found on the server. Since this project was uploaded as a ZIP, please re-upload the ZIP archive.');
+    }
+  }
+
   return getDirectoryFiles(project.projectPath, project.projectPath);
 };
 
